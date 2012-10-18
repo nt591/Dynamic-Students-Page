@@ -6,8 +6,8 @@ get '/' do
   erb :index
 end
 
-get '/:id' do |id|
-  @student = Student.find(id)
+get '/:id' do
+  @student = Student.find(params[:id])
   
   erb :profile
 end
@@ -18,6 +18,9 @@ class Student
   end
 
   def self.find(id)
-    [{:id => 1, :name => "kevin", :bio => "this is a bio" }, {:id => 2, :name => "brad", :bio => "this is brads bio"}]
+    student_list = [{:id => 1, :name => "kevin", :bio => "this is a bio" }, {:id => 2, :name => "brad", :bio => "this is brads bio"}]
+    student_list.select do |student|
+      student[:id] == id.to_i
+    end
   end
 end
