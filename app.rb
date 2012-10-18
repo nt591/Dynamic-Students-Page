@@ -14,24 +14,49 @@ get '/students/:id' do
 end
 
 class Student
+  require 'sqlite3'
+  attr_accessor :name, :tagline, :image_url, :bio, :email, :blog, :linkedin, :twitter, :fav_apps_one, :fav_apps_two, :fav_apps_three,
+                :codeschool, :github, :coderwall, :stack, :treehouse
+
   def initialize(args)
-    # :name => "Kevin", :bio => "text"
-    INSERT INTO students VALUES (?,?,?...), []
+    @name = args[:name]
+    @tagline = args[:tagline]
+    @image_url = args[:image_url]
+    @bio = args[:bio]
+    @email = args[:email]
+    @blog = args[:blog]
+    @linkedin = args[:linkedin]
+    @twitter = args[:twitter]
+    @fav_apps_one = args[:fav_apps_one]
+    @fav_apps_two = args[:fav_apps_two]
+    @fav_apps_three = args[:fav_apps_three]
+    @codeschool = args[:codeschool]
+    @github = args[:github]
+    @coderwall = args[:coderwall]
+    @stack = args[:stack]
+    @treehouse = args[:treehouse]
   end
+
+  def save
+    sql = "INSERT INTO students (name) VALUES ('Test');"
+
+    @@db.execute(sql)
+  end
+
   def self.all
-    rows = DATABASE.execute('SELECT * FROM students;')
+    rows = @@db.execute('SELECT * FROM students;')
     return rows
   end
 
   def self.find(id)
     id = id.to_i    
-    DATABASE.execute('SELECT * FROM students WHERE id = (?)', [id])
+    @@db.execute('SELECT * FROM students WHERE id = (?)', [id])
   end
 
   def self.create_database
     unless File.exists?('student_database.db')
-      DATABASE = SQLite3::Database.new "student_database.db"
-      rows = DATABASE.execute <<-SQL
+      @@db = SQLite3::Database.new "student_database.db"
+      rows = @@db.execute <<-SQL
         CREATE TABLE students (
           id INTEGER PRIMARY KEY,
           name VARCHAR(255),
