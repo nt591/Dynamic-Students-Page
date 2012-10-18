@@ -6,18 +6,18 @@ get '/' do
   erb :index
 end
 
-get '/:name' do |n|
-  @student = Student.find(n)
+get '/:id' do |id|
+  @student = Student.find(id)
   
   erb :profile
 end
 
 class Student
   def self.all
-    :students => {:name => "kevin", :bio => "this is a bio" } 
+    [{:id => 1, :name => "kevin", :bio => "this is a bio" }, {:id => 2, :name => "brad", :bio => "this is brads bio"}]
   end
 
   def self.find(id)
-    
+    [{:id => 1, :name => "kevin", :bio => "this is a bio" }, {:id => 2, :name => "brad", :bio => "this is brads bio"}]
   end
 end
