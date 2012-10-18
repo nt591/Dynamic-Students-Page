@@ -1,5 +1,4 @@
 require 'sinatra'
-require 'student_database'
 
 get '/' do
   @students = Student.all
@@ -9,16 +8,32 @@ end
 
 get '/students/:id' do
   @student = Student.find(params[:id])
-
+  
   erb :profile
+end
+
+
+get '/students/:id/edit' do
+  @student = Student.find(params[:id])
+
+  erb :edit
+end
+
+post '/students/:id/edit' do
+  @student = Student.find(params[:id]).first
+
+  @attributes = params[:student]
+  puts @attributes
+  @student.update(@attributes)
 end
 
 class Student
   require 'sqlite3'
-  attr_accessor :name, :tagline, :image_url, :bio, :email, :blog, :linkedin, :twitter, :fav_apps_one, :fav_apps_two, :fav_apps_three,
+  attr_accessor :id, :name, :tagline, :image_url, :bio, :email, :blog, :linkedin, :twitter, :fav_apps_one, :fav_apps_two, :fav_apps_three,
                 :codeschool, :github, :coderwall, :stack, :treehouse
 
   def initialize(args)
+    @id = args[:id]
     @name = args[:name]
     @tagline = args[:tagline]
     @image_url = args[:image_url]
@@ -38,23 +53,35 @@ class Student
   end
 
   def save
-    sql = "INSERT INTO students (name) VALUES ('Test');"
+    test = "test"
+    sql = "INSERT INTO students (name) VALUES (?);"
 
-    @@db.execute(sql)
+    @@db.execute(sql, [test])
+  end
+
+  def update(args)
+    @@db.execute("UPDATE students WHERE id =1
+    SET name='nikhil'")
   end
 
   def self.all
+    students = []
     rows = @@db.execute('SELECT * FROM students;')
-    return rows
+    rows.each do |row|
+      students << Student.new(:id => row[0], :name => row[1])
+    end
+    return students
   end
 
   def self.find(id)
     id = id.to_i    
-    @@db.execute('SELECT * FROM students WHERE id = (?)', [id])
+    data = @@db.execute('SELECT * FROM students WHERE id = (?)', [id]).first
+    student = Student.new(:id => data[0], :name => data[1])
+    return student
   end
 
   def self.create_database
-    unless File.exists?('student_database.db')
+    # unless File.exists?('student_database.db')
       @@db = SQLite3::Database.new "student_database.db"
       rows = @@db.execute <<-SQL
         CREATE TABLE students (
@@ -78,5 +105,5 @@ class Student
         );
       SQL
     end
-  end
+  # end
 end

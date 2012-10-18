@@ -22,4 +22,3 @@ unless File.exists?('student_database.db')
       treehouse VARCHAR(255)
     );
   SQL
-end
