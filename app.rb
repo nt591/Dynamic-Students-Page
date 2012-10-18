@@ -1,4 +1,5 @@
 require 'sinatra'
+require_relative 'student_database.rb'
 
 get '/' do
   @students = Student.all
@@ -6,21 +7,24 @@ get '/' do
   erb :index
 end
 
-get '/:id' do |n|
-  @student = Student.find(n)
+
+get '/students/:id' do
+  @student = Student.find(params[:id])
   
   erb :profile
 end
 
 class Student
   def self.all
-    [{:id => 1, :name => "kevin", :bio => "this is a bio" } , {:id => 2, :name => "nikhil", :bio => "nikhil's bio"}, {:id => 3, :name => "brad", :bio => "brad's bio"}]
+
+
+    [{:id => 1, :name => "kevin", :bio => "this is a bio" }, {:id => 2, :name => "brad", :bio => "this is brads bio"}]
   end
 
   def self.find(id)
-    students_list = [{:id => 1, :name => "kevin", :bio => "this is a bio" } , {:id => 2, :name => "nikhil", :bio => "nikhil's bio"}, {:id => 3, :name => "brad", :bio => "brad's bio"}]
-    students_list.each_with_index do |student, i|
-      #fill in logic later
+    student_list = [{:id => 1, :name => "kevin", :bio => "this is a bio" }, {:id => 2, :name => "brad", :bio => "this is brads bio"}]
+    student_list.select do |student|
+      student[:id] == id.to_i
     end
   end
 end
