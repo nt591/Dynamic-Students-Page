@@ -52,13 +52,6 @@ class Student
     @treehouse = args[:treehouse]
   end
 
-  def save
-    test = "test"
-    sql = "INSERT INTO students (name) VALUES (?);"
-
-    @@db.execute(sql, [test])
-  end
-
   def update(args)
     @@db.execute("UPDATE students WHERE id =1
     SET name='nikhil'")
@@ -76,8 +69,7 @@ class Student
   def save
     DATABASE.execute('INSERT INTO students (id, name, tagline, image_url, bio, email, blog, linkedin, twitter, fav_apps_one, 
                       fav_apps_two, fav_apps_three, codeschool, github, coderwall, stack, treehouse) 
-                      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);' 
-                      [self.id, self.name, self.tagline, self.image_url, self.bio, self.email, self.blog, self.linkedin, self.twitter,
+                      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);' [self.id, self.name, self.tagline, self.image_url, self.bio, self.email, self.blog, self.linkedin, self.twitter,
                       self.fav_apps_one, self.fav_apps_two, self.fav_apps_three, self.codeschool, self.github, self.coderwall,
                       self.stack, self.treehouse])
   end
