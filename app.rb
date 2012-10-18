@@ -5,7 +5,13 @@ get '/' do
 end
 
 get '/:name' do |n|
-  "this is a user profile page for #{n}"
+  @students = Student.all
+  erb :profile
 end
 
-run Sinatra::Application
+
+class Student
+  def self.all
+    { :name => "brad", :bio => "this is my bio page"}
+  end
+end
