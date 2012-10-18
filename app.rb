@@ -1,4 +1,5 @@
 require 'sinatra'
+require_relative 'student_database.rb'
 
 get '/' do
   @students = Student.all
@@ -6,7 +7,8 @@ get '/' do
   erb :index
 end
 
-get '/:id' do
+
+get '/students/:id' do
   @student = Student.find(params[:id])
   
   erb :profile
@@ -14,6 +16,8 @@ end
 
 class Student
   def self.all
+
+
     [{:id => 1, :name => "kevin", :bio => "this is a bio" }, {:id => 2, :name => "brad", :bio => "this is brads bio"}]
   end
 
@@ -24,3 +28,4 @@ class Student
     end
   end
 end
+
