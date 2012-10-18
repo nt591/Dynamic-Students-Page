@@ -1,7 +1,6 @@
 <h1>Users index</h1>
 
 <% @students.each do |student| %>
-<p><%= student[:id] %></p>
-<p><%= student[:name] %></p>
-<p><%= student[:bio] %></p>
+<p><%= student.id %></p>
+<p><%= student.name %></p>
 <% end %>
