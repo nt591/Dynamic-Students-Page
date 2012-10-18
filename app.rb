@@ -1,11 +1,23 @@
 require 'sinatra'
 
 get '/' do
+  @students = Student.all
+
   erb :index
 end
 
 get '/:name' do |n|
-  "this is a user profile page for #{n}"
+  @student = Student.find(n)
+  
+  erb :profile
 end
 
-run Sinatra::Application
+class Student
+  def self.all
+    :students => {:name => "kevin", :bio => "this is a bio" } 
+  end
+
+  def self.find(id)
+    
+  end
+end
