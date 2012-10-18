@@ -1,12 +1,7 @@
-require 'sinatra'
 
-get '/' do 
-  erb :index
-end
+# config.ru
 
-get '/:name' do |n|
-  "This is #{n}'s profile page."
-end
-
+require './app'
 run Sinatra::Application
 
+$stdout.sync = true
