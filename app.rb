@@ -14,7 +14,10 @@ get '/students/:id' do
 end
 
 class Student
-  
+  attr_accessor :name :tagline :image_url :bio :email :blog :linkedin :twitter :fav_apps_one 
+                :fav_apps_two :fav_apps_three :codeschool :github :coderwall :stack :treehouse
+
+
   def initialize(args)
     @name = args[:name]
     @tagline = args[:tagline]
@@ -32,12 +35,22 @@ class Student
     @coderwall = args[:coderwall]
     @stack = args[:stack]
     @treehouse = args[:treehouse]
+  end
 
   def self.all
     DATABASE.execute('SELECT * from students')
 
 
     #[{:id => 1, :name => "kevin", :bio => "this is a bio" }, {:id => 2, :name => "brad", :bio => "this is brads bio"}]
+  end
+
+  def save
+    DATABASE.execute('INSERT INTO students (id, name, tagline, image_url, bio, email, blog, linkedin, twitter, fav_apps_one, 
+                      fav_apps_two, fav_apps_three, codeschool, github, coderwall, stack, treehouse) 
+                      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);' 
+                      [self.id, self.name, self.tagline, self.image_url, self.bio, self.email, self.blog, self.linkedin, self.twitter,
+                      self.fav_apps_one, self.fav_apps_two, self.fav_apps_three, self.codeschool, self.github, self.coderwall,
+                      self.stack, self.treehouse])
   end
 
   def self.find(id)
