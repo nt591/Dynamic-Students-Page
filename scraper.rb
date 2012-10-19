@@ -1,36 +1,36 @@
 require 'sqlite3'
 require 'nokogiri'
 require 'open-uri'
-# require_relative 'student_database'
+# # require_relative 'student_database'
 
-# StudentDatabase.drop_database
-# File.delete('scraper.db')
-#unless File.exists?('student_database.db')
+# # StudentDatabase.drop_database
+# # File.delete('scraper.db')
+# unless File.exists?('student_database.db')
 
-
-# StudentDatabase.create_database
-db = SQLite3::Database.new "student_database.db" 
-  rows = db.execute <<-SQL
-    create table students (
-      id integer,
-      name varchar(255),
-      tagline varchar(140),
-      image_url varchar(255),
-      bio text,
-      email varchar(255),
-      blog varchar(255),
-      linkedin varchar(255),
-      twitter varchar(255),
-      fav_apps_one text,
-      fav_apps_two text,
-      fav_apps_three text,
-      codeschool varchar(255),
-      github varchar(255),
-      coderwall varchar(255),
-      stack varchar(255),
-      treehouse varchar(255)
-    );
-  SQL
+# # StudentDatabase.create_database
+#   db = SQLite3::Database.new "student_database.db" 
+#     rows = db.execute <<-SQL
+#       create table students (
+#         id integer,
+#         name varchar(255),
+#         tagline varchar(140),
+#         image_url varchar(255),
+#         bio text,
+#         email varchar(255),
+#         blog varchar(255),
+#         linkedin varchar(255),
+#         twitter varchar(255),
+#         fav_apps_one text,
+#         fav_apps_two text,
+#         fav_apps_three text,
+#         codeschool varchar(255),
+#         github varchar(255),
+#         coderwall varchar(255),
+#         stack varchar(255),
+#         treehouse varchar(255)
+#       );
+#     SQL
+# end 
 
 index_url = 'http://students.flatironschool.com/index.html'
 index_doc = Nokogiri::HTML(open(index_url))

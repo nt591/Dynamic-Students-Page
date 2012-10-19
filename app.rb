@@ -1,4 +1,7 @@
-require 'sinatra'
+require "sinatra"
+require "sinatra/reloader" if development?
+require 'nokogiri'
+require 'open-uri'
 
 get '/' do
   @students = Student.all
@@ -50,6 +53,9 @@ class Student
     @coderwall = args[:coderwall]
     @stack = args[:stack]
     @treehouse = args[:treehouse]
+
+    Student.create_database
+
   end
 
   def update(args)
@@ -67,7 +73,7 @@ class Student
   end
 
   def save
-    DATABASE.execute('INSERT INTO students (id, name, tagline, image_url, bio, email, blog, linkedin, twitter, fav_apps_one, 
+    @@db.execute('INSERT INTO students (id, name, tagline, image_url, bio, email, blog, linkedin, twitter, fav_apps_one, 
                       fav_apps_two, fav_apps_three, codeschool, github, coderwall, stack, treehouse) 
                       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);' [self.id, self.name, self.tagline, self.image_url, self.bio, self.email, self.blog, self.linkedin, self.twitter,
                       self.fav_apps_one, self.fav_apps_two, self.fav_apps_three, self.codeschool, self.github, self.coderwall,
@@ -82,8 +88,8 @@ class Student
   end
 
   def self.create_database
-    # unless File.exists?('student_database.db')
-      @@db = SQLite3::Database.new "student_database.db"
+    @@db = SQLite3::Database.new "student_database.db"
+    unless File.exists?('student_database.db')
       rows = @@db.execute <<-SQL
         CREATE TABLE students (
           id INTEGER PRIMARY KEY,
@@ -105,6 +111,47 @@ class Student
           treehouse VARCHAR(255)
         );
       SQL
+
+      Student.populate_database
     end
-  # end
+  end
+  create_database
+
+    def self.populate_database
+      index_url = 'http://students.flatironschool.com/index.html'
+      index_doc = Nokogiri::HTML(open(index_url))
+
+      profile_urls = index_doc.css('div.one_third a').map {|link| "http://students.flatironschool.com/#{link['href']}" }
+
+
+      profile_urls.each_with_index do |profile_url, index|
+        id = index + 1
+        profile_doc = Nokogiri::HTML(open(profile_url))
+
+        @id = id
+        @name = "#{profile_doc.css('div.two_third h1').text}"
+        @tagline = "#{profile_doc.css('div.two_third h2:first').text}"
+        @image_url =  "image should go here"
+        @bio = "#{profile_doc.css('.two_third p').text}"
+        @email = "#{profile_doc.xpath("//li[@class='mail']//a/@href")}"
+        @blog = "#{profile_doc.xpath("//li[@class='blog']//a/@href")}"
+        @linkedin = "#{profile_doc.xpath("//li[@class='linkedin']//a/@href")}"
+        @twitter = "#{profile_doc.xpath("//li[@class='twitter']//a/@href")}"
+        @fav_apps_one = "#{profile_doc.css('div.two_third div.one_third:nth-of-type(1)').text}"
+        @fav_apps_two   = "#{profile_doc.css('div.two_third div.one_third:nth-of-type(2)').text}"
+        @fav_apps_three = "#{profile_doc.css('div.two_third div.one_third:nth-of-type(3)').text}"
+        @codeschool = "#{profile_doc.xpath("//div[@class='one_fifth'][2]//a/@href")}"
+        @github = "#{profile_doc.xpath("//div[@class='one_fifth'][1]//a/@href")}"
+        @coderwall = "#{profile_doc.xpath("//div[@class='one_fifth'][3]//a/@href")}"
+        @stack = "#{profile_doc.xpath("//div[@class='one_fifth'][4]//a/@href")}"
+        @treehouse = "#{profile_doc.xpath("//div[@class='one_fifth last']//a/@href")}"
+
+        sql = ("INSERT INTO students(id, name, tagline, image_url, bio, email, blog, linkedin, twitter, fav_apps_one, fav_apps_two, fav_apps_three, codeschool, github, coderwall, stack, treehouse) 
+                  VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"[@id, @name,@tagline,@image_url,@bio,@email,@blog,@linkedin,@twitter,@fav_apps_one,
+                                  @fav_apps_two,@fav_apps_three,@codeschool,@github,@coderwall,@stack,@treehouse])
+
+        puts sql
+        @@db.execute(sql)
+    end
+  end     
 end
